@@ -13,12 +13,12 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/_.mjs",
-      "types": "./dist/_.d.mts"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
     },
     "./react": {
-      "import": "./dist/react.mjs",
-      "types": "./dist/react.d.mts"
+      "import": "./dist/react/index.mjs",
+      "types": "./dist/react/index.d.mts"
     }
   },
   "devDependencies": {
