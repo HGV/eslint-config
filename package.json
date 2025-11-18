@@ -1,6 +1,6 @@
 {
   "name": "@hgv/eslint-config",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Config files for JS Based projects",
   "type": "module",
   "homepage": "https://github.com/HGV/eslint-config",
@@ -34,6 +34,8 @@
     "@eslint/js": "^9.39.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-unicorn": "^62.0.0",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
     "typescript-eslint": "^8.46.4"

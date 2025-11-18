@@ -1,5 +1,6 @@
 import pluginA11y from "eslint-plugin-jsx-a11y";
 import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
 import { defineConfig } from "eslint/config";
 
 /**
@@ -11,6 +12,7 @@ export const reactConfig = defineConfig([
   pluginReact.configs.flat["recommended"] ?? {},
   pluginReact.configs.flat["jsx-runtime"] ?? {},
   pluginA11y.flatConfigs.recommended,
+  pluginReactHooks.configs.flat["recommended-latest"],
   {
     rules: {
       "react/button-has-type": "error",
@@ -19,10 +21,21 @@ export const reactConfig = defineConfig([
         "error",
         { namedComponents: "arrow-function" },
       ],
+      "react/jsx-boolean-value": "error",
       "react/jsx-curly-brace-presence": "error",
       "react/jsx-no-useless-fragment": "error",
       "react/no-unused-prop-types": "error",
       "react/self-closing-comp": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: `Identifier[name="React"]`,
+          message:
+            `Using the variable "React" is not allowed. ` +
+            `Use named imports instead, e.g.: import { FunctionComponent } from "react".`,
+        },
+      ],
     },
+    settings: { react: { version: "detect" } },
   },
 ]);

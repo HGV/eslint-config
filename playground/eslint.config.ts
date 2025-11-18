@@ -7,7 +7,7 @@ export default defineConfig([
   browserConfig,
   reactConfig,
   {
-    extends: ["@hgv/shared-eslint/react"],
+    extends: [],
     ignores: ["/dist"],
   },
 ]);
