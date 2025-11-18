@@ -4,14 +4,6 @@ import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-type TSESLintConfig = {
-  /**
-   * Disable rules because they conflict with CSS Modules.
-   * @default false
-   */
-  disable_no_unsafe?: boolean;
-};
-
 // A list of acronyms/initialisms which should always be all-caps (e.g., "HTML")
 // or all-lowercase (e.g., "html"), never mixed case (e.g., "Html").
 const acronyms = ["CSS", "HTML", "JSON", "SVG", "URL", "XML"];
