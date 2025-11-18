@@ -1,4 +1,4 @@
-# HGV ESlint config
+# HGV ESLint config
 
 ## Install
 
