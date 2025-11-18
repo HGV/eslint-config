@@ -18,8 +18,9 @@ const acronyms = ["CSS", "HTML", "JSON", "SVG", "URL", "XML"];
 
 /**
  * Recommended ESLint configuration for browser-based TypeScript projects.
- * This configuration uses the [@eslint/js](https://www.npmjs.com/package/@eslint/js)
- * and [typescript-eslint](https://typescript-eslint.io/) plugins.
+ * This configuration uses the [@eslint/js](https://www.npmjs.com/package/@eslint/js),
+ * [typescript-eslint](https://typescript-eslint.io/) plugins and
+ * [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)
  */
 export const nodeConfig = defineConfig([
   pluginJS.configs.recommended,
