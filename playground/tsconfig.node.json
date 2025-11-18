@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "target": "es2024",
+    "noEmit": false
+  },
+  "include": ["eslint.config.ts"]
+}

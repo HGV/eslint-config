@@ -1,0 +1,45 @@
+{
+  "name": "@hgv/eslint-config",
+  "version": "1.0.0",
+  "description": "Config files for JS Based projects",
+  "type": "module",
+  "homepage": "https://github.com/HGV/eslint-config",
+  "bugs": {
+    "url": "https://github.com/HGV/eslint-config/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/_.mjs",
+      "types": "./dist/_.d.mts"
+    },
+    "./react": {
+      "import": "./dist/react.mjs",
+      "types": "./dist/react.d.mts"
+    }
+  },
+  "devDependencies": {
+    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
+    "@types/node": "^24.10.0",
+    "tsdown": "^0.16.1",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.46.4"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ]
+}

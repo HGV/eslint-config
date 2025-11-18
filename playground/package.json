@@ -1,0 +1,18 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src"
+  },
+  "keywords": [],
+  "author": "Daniel Fischnaller <daniel.fischnaller@hgv.it>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "eslint": "^9.39.1"
+  },
+  "devDependencies": {
+    "@hgv/shared-eslint": "file:.."
+  }
+}
