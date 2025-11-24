@@ -1,4 +1,4 @@
 import { defineConfig } from "eslint/config";
-import { nodeConfig } from "./src/index";
+import { configs } from "./src/index";
 
-export default defineConfig([nodeConfig]);
+export default defineConfig(configs.ts.node);
