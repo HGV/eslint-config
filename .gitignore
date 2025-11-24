@@ -11,3 +11,4 @@ node_modules
 temp
 dist
 .vscode
+report
