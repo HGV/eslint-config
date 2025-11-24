@@ -9,7 +9,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "lint": "eslint src",
+    "lint:playground": "npm run lint --workspace=playground",
+    "publish": "npm run build && npm publish --access public"
   },
   "exports": {
     ".": {
@@ -21,6 +24,13 @@
       "types": "./dist/react/index.d.mts"
     }
   },
+  "keywords": [
+    "eslint",
+    "linting",
+    "hgv",
+    "react",
+    "ts"
+  ],
   "devDependencies": {
     "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@types/node": "^24.10.0",
@@ -31,16 +41,19 @@
     "eslint": "^9.0.0"
   },
   "dependencies": {
+    "jiti": "^2.6.1",
     "@eslint/js": "^9.39.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-unicorn": "^62.0.0",
     "globals": "^16.5.0",
-    "jiti": "^2.6.1",
     "typescript-eslint": "^8.46.4"
   },
   "files": [
     "dist"
+  ],
+  "workspaces": [
+    "playground"
   ]
 }
