@@ -1,13 +1,11 @@
-import { browserConfig } from "@hgv/shared-eslint";
-import { reactConfig } from "@hgv/shared-eslint/react";
+import { configs } from "@hgv/eslint-config";
 
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  browserConfig,
-  reactConfig,
+  configs.react,
   {
     extends: [],
-    ignores: ["/dist"],
+    ignores: ["/dist", "/node_modules"],
   },
 ]);
