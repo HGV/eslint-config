@@ -1,6 +1,6 @@
 {
   "name": "@hgv/eslint-config",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ESLint configuration for TypeScript projects @ HGV.",
   "type": "module",
   "homepage": "https://github.com/HGV/eslint-config",
