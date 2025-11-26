@@ -1,13 +1,24 @@
-import React from "react";
+import { useState } from "react";
+import {xmlalala} from "./myimport"
 
-const myUrl = "https://www.google.com";
-console.log(myUrl);
+function foo() {
+  const state = useState();
+  const { http } = useState;
+  // since it is in a destructured array, it is always checked
+  const [httpState, setState] = useState();
+  //Editor does not recognize that state is an indirection for useState result, so it is checked
+  const bar = state["http"];
 
-const counter = () => {
-  const [counter, setCounter] = React.useState(0);
-  return <button onClick={() => setCounter(counter + 1)}>{counter}</button>;
-};
+  const val = val
+  return useState;
+}
 
-function foo_bar() {
-  return 42;
+function bar() {
+  const useState = () => {
+    return [32];
+  };
+
+  const [http] = useState();
+
+  return useState;
 }

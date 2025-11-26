@@ -44,7 +44,7 @@ export const reactConfig = defineConfig([
       "react/jsx-no-useless-fragment": "error",
       "react/no-unused-prop-types": "error",
       "react/self-closing-comp": "error",
-      "react/hooks/refs": "off",
+      "react-hooks/refs": "off",
       "react-hooks/exhaustive-deps": "off",
     },
     settings: { react: { version: "detect" } },
