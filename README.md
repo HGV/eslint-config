@@ -3,25 +3,49 @@
 ## Install
 
 ```sh
-npm install --save-dev @hgv/shared-web-config
+npm install --save-dev @hgv/eslint-config
 ```
 
 ## Usage
 
 ```ts
-import { browserConfig } from "@hgv/shared-eslint";
-import { reactConfig } from "@hgv/shared-eslint/react";
-import { defineConfig } from "eslint/config";
+import { configs } from "@hgv/eslint-config";
 
-export default defineConfig([browserConfig, reactConfig]);
+export default defineConfig([configs.react]);
 ```
+
+## HGV Rules
+
+- 💼 Configurations in which the rule is enabled by default
+- ✅ node/browser configuration
+- ☑️ react configuration
+  🔧 Automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/user-guide/command-line-interface#--fix)
+- 💡 Manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions)
+
+| Rule                                                          | 💼   | 🔧  | 💡  |
+| ------------------------------------------------------------- | ---- | --- | --- |
+| [@hgv/no-mixed-case-acronyms](docs/noMixedCaseAcronyms.md)    | ✅☑️ |     | 💡  |
+| [@hgv/no-react-default-import](docs/noReactDefaultImport.md)  | ☑️   |     |     |
+| [@hgv/use-correct-apostrophes](docs/useCorrectApostrophes.md) | ✅☑️ | 🔧  |     |
 
 ## Default Configurations
 
-- JS/TS
+For The browser and node configurations, browser globals are used.
+For Node, the `node` preset is used.
+
+- JS/TS Node
+  - [@eslint/js](https://github.com/eslint/eslint/tree/main/packages/js)
+  - [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint)
+  - [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)
 
 ```js
 export const nodeConfig = defineConfig([
+  {
+    rules: {
+      "@hgv/use-correct-apostrophes": "error",
+      "@hgv/no-mixed-case-acronyms": "error",
+    },
+  },
   pluginJS.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.strictTypeChecked,
@@ -39,15 +63,9 @@ export const nodeConfig = defineConfig([
       "object-shorthand": "error",
       eqeqeq: "error",
       "prefer-template": "error",
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector: "Literal[value=/[a-z]'[a-z]/i]",
-          message: "Use the typographically correct apostrophe: ’ instead of '",
-        },
-      ],
     },
   },
+  // Unicorn rules
   {
     rules: {
       "unicorn/explicit-length-check": "off",
@@ -60,17 +78,9 @@ export const nodeConfig = defineConfig([
       "unicorn/no-await-expression-member": "off",
       "unicorn/no-nested-ternary": "off",
       "unicorn/no-null": "off",
+      "unicorn/abbreviations": "off",
+      "unicorn/no-negated-conditions": "off",
       "unicorn/prefer-at": "off",
-      "unicorn/prevent-abbreviations": [
-        "error",
-        {
-          extendDefaultReplacements: false,
-          replacements: Object.fromEntries(
-            acronyms.map((a) => [a.toLowerCase(), { [a]: true }])
-          ),
-          ignore: acronyms.map((a) => a.toLowerCase()),
-        },
-      ],
       "unicorn/no-array-sort": "off",
       "unicorn/no-document-cookie": "off",
     },
@@ -79,12 +89,16 @@ export const nodeConfig = defineConfig([
   // TS rules
   {
     rules: {
+      "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/dot-notation": "error",
       "@typescript-eslint/prefer-optional-chain": "error",
       "@typescript-eslint/naming-convention": [
         "error",
         { selector: ["default", "classicAccessor"], format: ["camelCase"] },
-        { selector: ["import", "method"], format: ["camelCase", "PascalCase"] },
+        {
+          selector: ["import", "method"],
+          format: ["camelCase", "PascalCase"],
+        },
         {
           selector: ["variableLike"],
           format: ["camelCase", "PascalCase"],
@@ -106,6 +120,7 @@ export const nodeConfig = defineConfig([
         "error",
         { ignoreDifferentlyNamedParameters: true },
       ],
+      "@typescript-eslint/only-throw-error": ["error", { allow: ["Redirect"] }],
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -127,25 +142,25 @@ export const nodeConfig = defineConfig([
     },
   },
   {
-    rules: {
-      "@typescript-eslint/only-throw-error": ["error", { allow: ["Redirect"] }],
-    },
-  },
-  {
     ignores: ["dist/**", "node_modules/**"],
   },
 ]);
 ```
 
 - React
+  - [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+  - [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)
+  - [eslint-plugin-react-hooks](https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks)
 
 ```ts
-/**
- * Recommended ESLint configuration for React projects.
- * This configuration uses the [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)
- * and [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) plugins
- */
 export const reactConfig = defineConfig([
+  {
+    rules: {
+      "@hgv/use-correct-apostrophes": "error",
+      "@hgv/no-mixed-case-acronyms": "error",
+      "@hgv/no-react-default-import": "error",
+    },
+  },
   pluginReact.configs.flat["recommended"] ?? {},
   pluginReact.configs.flat["jsx-runtime"] ?? {},
   pluginA11y.flatConfigs.recommended,
@@ -163,15 +178,8 @@ export const reactConfig = defineConfig([
       "react/jsx-no-useless-fragment": "error",
       "react/no-unused-prop-types": "error",
       "react/self-closing-comp": "error",
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector: `Identifier[name="React"]`,
-          message:
-            `Using the variable "React" is not allowed. ` +
-            `Use named imports instead, e.g.: import { FunctionComponent } from "react".`,
-        },
-      ],
+      "react/hooks/refs": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
     settings: { react: { version: "detect" } },
   },
