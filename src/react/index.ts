@@ -12,8 +12,9 @@ const plugins = {
 
 /**
  * Recommended ESLint configuration for React projects.
- * This configuration uses the [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)
- * and [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) plugins
+ * This configuration uses the [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react),
+ * [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)
+ * and [eslint-plugin-react-hooks](https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks) plugins
  */
 export const reactConfig = defineConfig([
   {
@@ -43,6 +44,8 @@ export const reactConfig = defineConfig([
       "react/jsx-no-useless-fragment": "error",
       "react/no-unused-prop-types": "error",
       "react/self-closing-comp": "error",
+      "react/hooks/refs": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
     settings: { react: { version: "detect" } },
   },

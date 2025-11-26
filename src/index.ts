@@ -10,8 +10,8 @@ const hgvPlugin = getHGVPlugin("ts");
 
 /**
  * Recommended ESLint configuration for browser-based TypeScript projects.
- * This configuration uses the [@eslint/js](https://www.npmjs.com/package/@eslint/js),
- * [typescript-eslint](https://typescript-eslint.io/) plugins and
+ * This configuration uses the [@eslint/js](https://github.com/eslint/eslint/tree/main/packages/js),
+ * [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) plugins and
  * [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)
  */
 const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
@@ -50,6 +50,7 @@ const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
         "prefer-template": "error",
       },
     },
+    // Unicorn rules
     {
       rules: {
         "unicorn/explicit-length-check": "off",
@@ -62,6 +63,8 @@ const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
         "unicorn/no-await-expression-member": "off",
         "unicorn/no-nested-ternary": "off",
         "unicorn/no-null": "off",
+        "unicorn/abbreviations": "off",
+        "unicorn/no-negated-conditions": "off",
         "unicorn/prefer-at": "off",
         "unicorn/no-array-sort": "off",
         "unicorn/no-document-cookie": "off",
@@ -71,6 +74,8 @@ const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
     // TS rules
     {
       rules: {
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/dot-notation": "error",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/naming-convention": [
@@ -101,6 +106,10 @@ const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
           "error",
           { ignoreDifferentlyNamedParameters: true },
         ],
+        "@typescript-eslint/only-throw-error": [
+          "error",
+          { allow: ["Redirect"] },
+        ],
         "@typescript-eslint/no-unused-vars": [
           "error",
           {
@@ -119,14 +128,6 @@ const nodeConfig = (options: { addHGVPlugins?: boolean }) => {
           projectService: true,
           tsconfigRootDir: process.cwd(),
         },
-      },
-    },
-    {
-      rules: {
-        "@typescript-eslint/only-throw-error": [
-          "error",
-          { allow: ["Redirect"] },
-        ],
       },
     },
     {
