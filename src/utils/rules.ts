@@ -59,7 +59,7 @@ export type ESLintPluginRules<
  *
  * @param namespace name of the plugin, becomes `eslint-plugin-<name>` and the rules will become accessible as `<name>/rule-name`
  * @param rules rules the plugin should load
- * @param prefix optional prefix for all rules of the plugin, e.g. `@hgv` makes rules beome `@hgv/rule-name`
+ * @param prefix optional prefix for all rules of the plugin, e.g. `@hgv` makes rules become `@hgv/rule-name`
  * @returns
  */
 export const definePlugin = <

@@ -10,7 +10,7 @@ export interface PackageJSON {
   name?: string;
 
   /**
-   * Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)
+   * Version must be parsable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)
    */
   version?: string;
 
