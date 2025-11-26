@@ -1,11 +1,11 @@
-import { Rule, Scope } from "eslint";
+import { Rule } from "eslint";
 import type * as ESTree from "estree";
 import globals from "globals";
 import nodePath from "node:path";
 import { getPackageJSON } from "../../utils/package";
 import { defineRule } from "../../utils/rules";
 import { and, createCheckers, not, or } from "./conditions";
-type AcronymCorrectOption = "upper" | "lower" | "match-casing";
+type AcronymCorrectOption = "pascal" | "upper" | "lower" | "match-casing";
 
 /**
  * Per Acronym config
@@ -22,6 +22,14 @@ interface MixedCaseAcronymOptions {
    * @default false
    */
   ignoreStart?: boolean;
+}
+
+interface Checks {
+  checkImports: boolean;
+  checkMemberExpressions: boolean;
+  checkVariableDeclarations: boolean;
+  checkObjectExpressions: boolean;
+  checkCallExpressions: boolean;
 }
 
 /**
@@ -52,6 +60,7 @@ type Options = Omit<MixedCaseAcronymOptions, "value"> & {
    */
   ignoreFromPackageDependencies?: Partial<IgnoreFromPackageJSON>;
   disableOnFiles?: string[];
+  checks: Checks;
   /**
    * Additional sources to ignore. If a string matches, the acronym rule will ignore variables imported from there
    * @default []
@@ -73,8 +82,15 @@ export const defaultOptions: Required<Options> = {
     peerDependencies: true,
   },
   disableOnFiles: ["**/*.config.ts"],
+  checks: {
+    checkCallExpressions: true,
+    checkImports: true,
+    checkVariableDeclarations: true,
+    checkMemberExpressions: true,
+    checkObjectExpressions: true,
+  },
   ignoreFromSources: [],
-  ignoreStart: false,
+  ignoreStart: true,
   option: "match-casing",
   ignoreGlobals: globals.browser,
   checkStrings: false,
@@ -93,7 +109,10 @@ const getIncorrectlyCasedAcronyms = (
       const regexp = new RegExp(escapeRegExp(acronym.value), "gi");
       const matches = word.matchAll(regexp);
       for (const match of matches) {
-        if (match[0] !== correctAcronym(acronym.value, acronym.option)) {
+        if (
+          match[0] !== correctAcronym(acronym.value, acronym.option) &&
+          !(match.index === 0 && acronym.ignoreStart)
+        ) {
           errors.add(acronym.value);
         }
       }
@@ -127,23 +146,13 @@ const correctAcronym = (acronym: string, option: AcronymCorrectOption) => {
     case "upper": {
       return acronym.toLocaleUpperCase();
     }
+    case "pascal": {
+      return acronym.charAt(0).toUpperCase() + acronym.slice(1).toLowerCase();
+    }
     case "match-casing": {
       return acronym;
     }
   }
-};
-
-const getLocallyAvailableVariables = (
-  scope: Scope.Scope,
-  map: Map<string, Scope.Variable> = new Map()
-): Map<string, Scope.Variable> => {
-  if (scope.upper && scope.upper.type !== "global") {
-    getLocallyAvailableVariables(scope.upper, map);
-  }
-  for (const variable of scope.variables) {
-    map.set(variable.name, variable);
-  }
-  return map;
 };
 
 type IdNode = ESTree.Identifier & Rule.NodeParentExtension;
@@ -170,7 +179,7 @@ const getImportSource = (
   const options = context.options[0] as Options;
   const { sourceCode } = context;
   const scope = sourceCode.getScope(node);
-  const variable = getLocallyAvailableVariables(scope).get(node.name);
+  const variable = scope.set.get(node.name);
   const ignoreSet = new Set<string>(options.ignoreFromSources);
 
   if (packageJSON) {
@@ -211,6 +220,10 @@ const checkCallExpression = (
   context: Rule.RuleContext,
   node: ESTree.CallExpression
 ): boolean => {
+  if (!(context.options[0] as Options).checks.checkCallExpressions) {
+    return false;
+  }
+
   switch (node.callee.type) {
     case "Identifier": {
       const { sourceCode } = context;
@@ -235,6 +248,10 @@ const checkMemberExpression = (
   context: Rule.RuleContext,
   node: ESTree.MemberExpression
 ): boolean => {
+  if (!(context.options[0] as Options).checks.checkMemberExpressions) {
+    return false;
+  }
+
   switch (node.object.type) {
     case "Identifier": {
       const { sourceCode } = context;
@@ -348,22 +365,64 @@ const checkWord = (
   if (errors.length > 0) {
     const correctedWord = correctWord(word, acronymOptions);
 
-    context.report({
-      message: `Found incorrectly cased acronyms in ${node.type}: ${errors}`,
-      data: {
-        acronyms: errors,
-      },
-      suggest: [
-        {
-          desc: `correct with ${correctedWord}`,
-          fix: (fixer) => {
-            return fixer.replaceText(node, correctedWord);
-          },
-        },
-      ],
+    report(
+      context,
+      `Found incorrectly cased acronyms in ${node.type}: ${errors}`,
       node,
-    });
+      correctedWord
+    );
   }
+};
+
+const report = (
+  context: Rule.RuleContext,
+  message: string,
+  node: ESTree.Node,
+  correctedWord: string
+) => {
+  context.report({
+    message,
+    node,
+    suggest: [
+      {
+        desc: `Correct with ${correctedWord}`,
+        fix: (fixer) => {
+          if (node.type === "Identifier") {
+            const { sourceCode } = context;
+            const scope = sourceCode.getScope(node);
+            const variable =
+              scope.set.get(node.name) ??
+              scope.references.find((r) => r.identifier === node)?.resolved;
+
+            if (!variable) {
+              return fixer.replaceText(node, correctedWord);
+            }
+
+            const { identifiers, references } = variable;
+            const toReplace = [
+              ...identifiers,
+              ...references.map((r) => r.identifier),
+            ];
+
+            const uniqueRanges = new Set<string>();
+            const fixes = [];
+
+            for (const replace of toReplace) {
+              const rangeKey = `${replace.range![0]}-${replace.range![1]}`;
+              if (uniqueRanges.has(rangeKey)) {
+                continue;
+              }
+              uniqueRanges.add(rangeKey);
+              fixes.push(fixer.replaceText(replace, correctedWord));
+            }
+
+            return fixes;
+          }
+          return fixer.replaceText(node, correctedWord);
+        },
+      },
+    ],
+  });
 };
 
 export default defineRule<Options, "no-mixed-case-acronyms">(
@@ -479,27 +538,33 @@ export default defineRule<Options, "no-mixed-case-acronyms">(
           }
 
           switch (true) {
-            case and(
-              conditions.isLeftSideVariableDefinition,
-              not(conditions.isObjectPattern)
-            )([context, node]):
-            case or(
-              conditions.isDefaultImport,
-              conditions.isNamespaceImport,
-              conditions.isCheckedImportSpecifier
-            )([context, node]):
+            case options.checks.checkVariableDeclarations &&
+              and(
+                conditions.isLeftSideVariableDefinition,
+                not(conditions.isObjectPattern)
+              )([context, node]):
+            case options.checks.checkImports &&
+              or(
+                conditions.isDefaultImport,
+                conditions.isNamespaceImport,
+                conditions.isCheckedImportSpecifier
+              )([context, node]):
             case conditions.isArrayPatternDefinition([context, node]):
-            case conditions.isObjectExpression([context, node]): {
+            case options.checks.checkObjectExpressions &&
+              conditions.isObjectExpression([context, node]): {
               const incorrectlyNamedAcronyms = getIncorrectlyCasedAcronyms(
                 node.name,
                 acronymOptions
               );
 
               if (incorrectlyNamedAcronyms.length > 0) {
-                context.report({
-                  message: `Found incorrectly cased acronyms: ${incorrectlyNamedAcronyms}`,
+                const correctedWord = correctWord(node.name, acronymOptions);
+                report(
+                  context,
+                  `Found incorrectly cased acronyms: ${incorrectlyNamedAcronyms}`,
                   node,
-                });
+                  correctedWord
+                );
               }
             }
           }
